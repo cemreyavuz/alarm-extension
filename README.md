@@ -1,5 +1,7 @@
 # Alarm extension
 
+[![CI](https://github.com/cemreyavuz/alarm-extension/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/cemreyavuz/alarm-extension/actions/workflows/ci.yml)
+
 Local time-based reminders as a Chrome **Manifest V3** extension. Built with **Bun**; output is loaded unpacked from `dist/`.
 
 ## Prerequisites
