@@ -2,7 +2,7 @@ import { test, expect } from "./extension-fixture";
 
 test.describe("popup", () => {
   test("shows title and empty state", async ({ popupPage }) => {
-    await expect(popupPage.getByRole("heading", { name: "Alarms" })).toBeVisible();
+    await expect(popupPage.getByRole("heading", { name: "nudgememaybe" })).toBeVisible();
     await expect(popupPage.getByText("No alarms yet.")).toBeVisible();
   });
 

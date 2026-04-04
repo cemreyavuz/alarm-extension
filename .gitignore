@@ -12,4 +12,4 @@ dist/
 /playwright/.cache/
 
 # Chrome Web Store zip (bun run pack / zip:dist)
-alarm-extension-v*.zip
+nudgememaybe-v*.zip

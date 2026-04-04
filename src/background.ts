@@ -54,7 +54,7 @@ const alarmNotificationOptions = (
 ): chrome.notifications.NotificationOptions<true> => {
   const opts: chrome.notifications.NotificationOptions<true> = {
     type: "basic",
-    title: "Alarm",
+    title: "nudgememaybe",
     message,
     iconUrl,
     priority: 2,
