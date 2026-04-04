@@ -1,26 +1,20 @@
 #!/usr/bin/env bun
-import { mkdirSync, existsSync, copyFileSync, readdirSync, watch } from "node:fs";
+import { mkdirSync, existsSync, copyFileSync, readdirSync, watch, rmSync } from "node:fs";
 import { join } from "node:path";
 
 const root = join(import.meta.dir, "..");
 const dist = join(root, "dist");
-const htmxSrc = join(root, "public/vendor/htmx.min.js");
-const htmxUrl = "https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js";
-
-async function ensureHtmx(): Promise<void> {
-  mkdirSync(join(root, "public/vendor"), { recursive: true });
-  if (existsSync(htmxSrc)) return;
-  console.warn("Fetching htmx.min.js …");
-  const r = await fetch(htmxUrl);
-  if (!r.ok) throw new Error(`htmx fetch failed: ${r.status}`);
-  await Bun.write(htmxSrc, await r.arrayBuffer());
-}
 
 async function buildOnce(): Promise<void> {
-  await ensureHtmx();
-
   mkdirSync(dist, { recursive: true });
-  mkdirSync(join(dist, "vendor"), { recursive: true });
+  const vendorDist = join(dist, "vendor");
+  if (existsSync(vendorDist)) {
+    rmSync(vendorDist, { recursive: true });
+  }
+  const partialsDist = join(dist, "partials");
+  if (existsSync(partialsDist)) {
+    rmSync(partialsDist, { recursive: true });
+  }
   mkdirSync(join(dist, "icons"), { recursive: true });
 
   const result = await Bun.build({
@@ -40,7 +34,6 @@ async function buildOnce(): Promise<void> {
   copyFileSync(join(root, "manifest.json"), join(dist, "manifest.json"));
   copyFileSync(join(root, "public/popup.html"), join(dist, "popup.html"));
   copyFileSync(join(root, "public/popup.css"), join(dist, "popup.css"));
-  copyFileSync(htmxSrc, join(dist, "vendor/htmx.min.js"));
 
   const iconsDir = join(root, "public/icons");
   if (existsSync(iconsDir)) {
