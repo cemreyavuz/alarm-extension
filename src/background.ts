@@ -80,7 +80,7 @@ const createAlarmNotification = async (
   message: string,
   withButtons: boolean,
 ): Promise<void> => {
-  const extensionIcon = chrome.runtime.getURL("icons/icon@48px.png");
+  const extensionIcon = chrome.runtime.getURL("icons/icon@128px.png");
   try {
     await chrome.notifications.create(
       `notif-${id}`,
