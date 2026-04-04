@@ -6,7 +6,7 @@
   "scripts": {
     "build": "bun run scripts/build.ts",
     "zip:dist": "bun run scripts/zip-dist.ts",
-    "pack": "bun run build && bun run zip:dist",
+    "pack": "rm -rf dist && bun run build && bun run zip:dist",
     "watch": "bun run scripts/build.ts --watch",
     "test": "bun test",
     "playwright:install": "bunx playwright install --with-deps chromium",
