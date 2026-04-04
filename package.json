@@ -1,0 +1,14 @@
+{
+  "name": "alarm-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "watch": "bun run scripts/build.ts --watch",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.280"
+  }
+}
