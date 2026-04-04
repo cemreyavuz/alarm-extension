@@ -1,0 +1,3 @@
+[test]
+# Playwright owns e2e/*.spec.ts; keep Bun’s runner scoped to unit tests under src.
+root = "src"
