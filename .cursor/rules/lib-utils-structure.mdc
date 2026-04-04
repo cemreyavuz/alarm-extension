@@ -1,0 +1,43 @@
+---
+description: Layout and imports for small utilities under src/lib/<util>/
+globs: src/lib/*/**
+alwaysApply: false
+---
+
+# `src/lib` utility folders
+
+Each **utility** lives in its own directory: `src/lib/<util-name>/`.
+
+## Required layout
+
+| File | Role |
+|------|------|
+| `index.ts` | **Public API** — re-export what other code may import. App and feature code import only from `lib/<util-name>` (this barrel). |
+| `<util-name>.ts` | Implementation (and internal helpers not meant for consumers). |
+| `<util-name>.test.ts` | Tests for the util. |
+
+Use **kebab-case** for `<util-name>` (folder and `.ts` basename match).
+
+## Imports
+
+- **Consumers** (e.g. `popup.ts`, `background.ts`): `import { thing } from "./lib/<util-name>";`
+- **Do not** deep-import `./lib/<util-name>/<util-name>.ts` from app code.
+- **Tests** should prefer the **barrel** (`./index`) when asserting the public surface. Import from `./<util-name>` only when testing implementation details or symbols intentionally not re-exported from `index.ts`.
+
+## Test-only or internal exports
+
+Keep implementation-only symbols in `<util-name>.ts`. If tests need them without widening the public API for the app:
+
+- Re-export from `index.ts` with a short comment (e.g. test-only helper), **or**
+- Import from `./<util-name>` in `*.test.ts` only (white-box tests).
+
+Do not add a second barrel; `index.ts` remains the single external interface for the util package.
+
+## Example
+
+```
+src/lib/escape-html/
+  index.ts           → export { escapeHtml } from "./escape-html";
+  escape-html.ts
+  escape-html.test.ts
+```
