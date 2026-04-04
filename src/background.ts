@@ -2,6 +2,7 @@ import {
   STORAGE_KEY_ALARMS,
   alarmName,
   idFromAlarmName,
+  getUpcomingEnabledAlarms,
   parseAlarms,
   planChromeAlarmReconcile,
   type Alarm,
@@ -29,6 +30,11 @@ export const reconcileAlarms = async (): Promise<void> => {
   for (const s of schedules) {
     await chrome.alarms.create(alarmName(s.alarmId), { when: s.whenMs });
   }
+
+  const upcoming = getUpcomingEnabledAlarms(alarms, now);
+  const text = upcoming > 0 ? String(upcoming) : "";
+  await chrome.action.setBadgeText({ text });
+  await chrome.action.setBadgeBackgroundColor({ color: "#5F6368" });
 };
 
 chrome.storage.onChanged.addListener((changes, area) => {

@@ -38,13 +38,20 @@ export const sortAlarmsBySchedule = (alarms: Alarm[]): Alarm[] =>
 
 export type ScheduleEntry = { alarmId: string; whenMs: number };
 
+/** Enabled and fire time strictly after nowMs (same rule as chrome.alarms scheduling). */
+export const isUpcomingAlarmEnabled = (alarm: Alarm, nowMs: number): boolean =>
+  alarm.enabled && alarm.scheduledAt > nowMs;
+
+export const getUpcomingEnabledAlarms = (alarms: Alarm[], nowMs: number): number =>
+  alarms.filter((a) => isUpcomingAlarmEnabled(a, nowMs)).length;
+
 /** Enabled alarms with fire time strictly after nowMs. */
 export const planChromeAlarmReconcile = (
   alarms: Alarm[],
   nowMs: number,
 ): { schedules: ScheduleEntry[] } => {
   const schedules = alarms
-    .filter((a) => a.enabled && a.scheduledAt > nowMs)
+    .filter((a) => isUpcomingAlarmEnabled(a, nowMs))
     .map((a) => ({ alarmId: a.id, whenMs: a.scheduledAt }));
   return { schedules };
 };

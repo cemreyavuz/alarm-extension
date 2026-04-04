@@ -1,4 +1,10 @@
-import { test as base, chromium, expect, type BrowserContext } from "@playwright/test";
+import {
+  test as base,
+  chromium,
+  expect,
+  type BrowserContext,
+  type Worker,
+} from "@playwright/test";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,6 +15,7 @@ export { expect };
 
 export const test = base.extend<{
   extensionContext: BrowserContext;
+  extensionServiceWorker: Worker;
   extensionId: string;
   popupPage: import("@playwright/test").Page;
 }>({
@@ -25,11 +32,15 @@ export const test = base.extend<{
     await context.close();
   },
 
-  extensionId: async ({ extensionContext }, use) => {
+  extensionServiceWorker: async ({ extensionContext }, use) => {
     const [existing] = extensionContext.serviceWorkers();
     const worker =
       existing ?? (await extensionContext.waitForEvent("serviceworker"));
-    const id = worker.url().split("/")[2];
+    await use(worker);
+  },
+
+  extensionId: async ({ extensionServiceWorker }, use) => {
+    const id = extensionServiceWorker.url().split("/")[2];
     if (!id) throw new Error("Could not parse extension id from service worker URL");
     await use(id);
   },
