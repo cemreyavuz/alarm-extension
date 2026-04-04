@@ -1,0 +1,32 @@
+---
+description: Do not use TypeScript type assertions (`as`); narrow types instead
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# No type assertions (`as`)
+
+Do not use the **`as`** keyword for type assertions in this project. Assertions silence the type checker and hide invalid assumptions.
+
+## Prefer
+
+- **`instanceof`**, **`typeof`**, and **user-defined type guards** (`x is T`)
+- **`Reflect.get(obj, key)`** plus `typeof` / `in` checks when validating plain objects from storage or messages
+- **Explicit annotations** on object literals when the API requires a stricter type (e.g. build a `chrome.notifications.NotificationOptions<true>` with all required fields, or use a valid fallback `iconUrl` such as a data URL)
+- **DOM APIs**: `formInput(form, name)` with `instanceof HTMLInputElement`, `getElementById` + `instanceof HTMLFormElement`, `closest` + `instanceof` for the expected element type
+
+## Avoid
+
+```typescript
+// ❌ BAD
+value as SomeType;
+opts as NotificationOptions<true>;
+form.elements.namedItem("x") as HTMLInputElement;
+```
+
+## Allowed
+
+- Generics on DOM methods (e.g. `querySelectorAll<HTMLButtonElement>(...)`) when they reflect real selectors, not arbitrary widening
+- `as const` is acceptable only if the team agrees it is not an “assertion” in the same sense; default stance: avoid `as` in all forms unless there is no alternative
+
+When Chrome’s typings are stricter than runtime (e.g. `notifications.create` requiring `iconUrl`), satisfy the type with real values or a documented fallback instead of asserting.
