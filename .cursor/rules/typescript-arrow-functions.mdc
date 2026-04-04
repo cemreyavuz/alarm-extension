@@ -1,0 +1,36 @@
+---
+description: Prefer arrow functions for standalone functions in TypeScript
+globs: "**/*.ts"
+alwaysApply: false
+---
+
+# Arrow functions (TypeScript)
+
+For **standalone** functions (module scope, helpers, utilities), use **`const name = (...) => ...`** instead of `function name(...)`.
+
+## Prefer
+
+```typescript
+export const add = (a: number, b: number): number => a + b;
+
+export const isUser = (x: unknown): x is User => {
+  return typeof x === "object" && x !== null && "id" in x;
+};
+```
+
+## Avoid (for the cases above)
+
+```typescript
+export function add(a: number, b: number): number {
+  return a + b;
+}
+```
+
+## Keep `function` when it genuinely helps
+
+- **Class methods** (instance or `static`) — use normal method syntax.
+- **Need `this` binding** as a callable (e.g. DOM handlers where you rely on `function` + caller binding) — prefer arrow at definition site when possible instead.
+- **Generators** (`function*`) — cannot be plain `=>`.
+- **Declaration must be hoisted** across a large file (rare); reorder or use `const` after dependencies instead.
+
+Default stance: **arrow `const` for exported helpers and internal functions** unless one of the exceptions applies.
