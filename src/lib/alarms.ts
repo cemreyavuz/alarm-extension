@@ -19,13 +19,12 @@ export const idFromAlarmName = (name: string): string | null => {
 
 export const isAlarm = (x: unknown): x is Alarm => {
   if (typeof x !== "object" || x === null) return false;
-  const o = x as Record<string, unknown>;
   return (
-    typeof o.id === "string" &&
-    typeof o.label === "string" &&
-    typeof o.scheduledAt === "number" &&
-    typeof o.enabled === "boolean" &&
-    typeof o.updatedAt === "number"
+    typeof Reflect.get(x, "id") === "string" &&
+    typeof Reflect.get(x, "label") === "string" &&
+    typeof Reflect.get(x, "scheduledAt") === "number" &&
+    typeof Reflect.get(x, "enabled") === "boolean" &&
+    typeof Reflect.get(x, "updatedAt") === "number"
   );
 };
 
