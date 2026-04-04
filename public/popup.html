@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alarms</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <h1 class="title">Alarms</h1>
+
+      <form id="add-form" class="card">
+        <div class="field">
+          <label for="label">Label</label>
+          <input
+            id="label"
+            name="label"
+            type="text"
+            required
+            maxlength="200"
+            placeholder="Oven, game claim, …"
+            autocomplete="off"
+          />
+        </div>
+        <div class="field">
+          <label for="when">When</label>
+          <input id="when" name="when" type="datetime-local" required />
+        </div>
+        <div class="presets" aria-label="Quick relative times">
+          <span class="presets-label">Quick:</span>
+          <button type="button" class="preset" data-preset="5">+5 min</button>
+          <button type="button" class="preset" data-preset="15">+15 min</button>
+          <button type="button" class="preset" data-preset="60">+1 h</button>
+        </div>
+        <p id="form-error" class="error" hidden></p>
+        <button type="submit" class="primary">Add alarm</button>
+      </form>
+
+      <section class="list-section">
+        <h2 class="list-heading">Upcoming</h2>
+        <div id="alarm-list" class="list"></div>
+      </section>
+    </main>
+
+    <script src="vendor/htmx.min.js"></script>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

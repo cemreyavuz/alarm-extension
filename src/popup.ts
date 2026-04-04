@@ -7,19 +7,9 @@ import {
   scheduledAtAfterMinutes,
   type Alarm,
 } from "./lib/alarms";
-
-const escapeHtml = (s: string): string =>
-  s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-
-const formatWhen = (ms: number): string =>
-  new Date(ms).toLocaleString(undefined, {
-    dateStyle: "short",
-    timeStyle: "short",
-  });
+import { toDatetimeLocalValue } from "./lib/datetime-local-value";
+import { escapeHtml } from "./lib/escape-html";
+import { formatWhen } from "./lib/format-when";
 
 const loadAlarms = async (): Promise<Alarm[]> => {
   const v = await chrome.storage.local.get(STORAGE_KEY_ALARMS);
@@ -81,19 +71,13 @@ const wirePresets = (form: HTMLFormElement): void => {
       const min = Number(btn.dataset.preset);
       if (!Number.isFinite(min)) return;
       const t = scheduledAtAfterMinutes(Date.now(), min);
-      const d = new Date(t);
-      const pad = (n: number) => String(n).padStart(2, "0");
-      const local = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-      whenInput.value = local;
+      whenInput.value = toDatetimeLocalValue(new Date(t));
     });
   });
 };
 
-const defaultDatetimeLocalValue = (offsetMinutes: number): string => {
-  const d = new Date(Date.now() + offsetMinutes * 60_000);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
+const defaultDatetimeLocalValue = (offsetMinutes: number): string =>
+  toDatetimeLocalValue(new Date(Date.now() + offsetMinutes * 60_000));
 
 document.addEventListener("DOMContentLoaded", () => {
   const formEl = document.getElementById("add-form");
