@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "nudgememaybe",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Gentle one-off nudges in Chrome: pick a time, label it, use presets, get notified. Saved on your device - no account needed.",
   "permissions": ["alarms", "storage", "notifications"],
   "action": {
