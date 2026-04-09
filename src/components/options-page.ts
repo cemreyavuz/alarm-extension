@@ -1,4 +1,4 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import {
@@ -31,72 +31,9 @@ const applyFilters = (
 
 @customElement("options-page")
 export class OptionsPageElement extends LitElement {
-  static styles = css`
-    :host {
-      color-scheme: light dark;
-      --bg: #0f1419;
-      --surface: #1a2332;
-      --border: #2d3a4d;
-      --text: #e7ecf3;
-      --muted: #8b9cb3;
-      --accent: #3b82f6;
-      font-family: system-ui, "Segoe UI", Roboto, sans-serif;
-      font-size: 14px;
-      display: block;
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    @media (prefers-color-scheme: light) {
-      :host {
-        --bg: #f4f6f9;
-        --surface: #fff;
-        --border: #d1d9e6;
-        --text: #1a2332;
-        --muted: #5c6b80;
-      }
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
-    .wrap {
-      margin: 0 auto;
-      width: min(880px, 100%);
-      padding: 24px 16px 28px;
-    }
-
-    .header {
-      margin-bottom: 14px;
-    }
-
-    .title {
-      margin: 0;
-      font-size: 1.4rem;
-    }
-
-    .subtitle {
-      margin: 6px 0 0;
-      color: var(--muted);
-    }
-
-    .field {
-      margin-bottom: 10px;
-    }
-
-    input[type="search"] {
-      width: 320px;
-      padding: 8px 10px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--bg);
-      color: var(--text);
-    }
-  `;
+  override createRenderRoot(): HTMLElement {
+    return this;
+  }
 
   @state()
   private accessor allHistory: AlarmHistoryEntry[] = [];

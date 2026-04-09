@@ -1,22 +1,13 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import type { AlarmHistoryEntry } from "../lib/alarms";
 
 @customElement("history-list")
 export class HistoryListElement extends LitElement {
-  static styles = css`
-    :host {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .empty {
-      margin: 0;
-      color: var(--muted);
-    }
-  `;
+  override createRenderRoot(): HTMLElement {
+    return this;
+  }
 
   @property({ attribute: false })
   accessor rows: AlarmHistoryEntry[] = [];

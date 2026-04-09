@@ -29,6 +29,12 @@ jobs:
       - name: Unit tests
         run: bun test
 
+      - name: Lint
+        run: bun run lint
+
+      - name: Format
+        run: bun run format:check
+
       - name: Install Playwright Chromium and OS dependencies
         run: bunx playwright install --with-deps chromium
 
