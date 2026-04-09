@@ -1,5 +1,5 @@
-export const escapeHtml = (s: string): string =>
-  s
+export const escapeHtml = (value: string): string =>
+  value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")

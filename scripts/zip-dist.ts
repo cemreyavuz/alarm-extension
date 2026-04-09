@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { readFileSync, existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -25,7 +25,7 @@ const out = join(root, `${slug}-v${version}.zip`);
 
 const zip = spawnSync("zip", ["-r", "-q", out, "."], {
   cwd: dist,
-  encoding: "utf-8",
+  encoding: "utf8",
 });
 
 if (zip.error) {

@@ -1,4 +1,5 @@
 import type { Worker } from "@playwright/test";
+
 import { expect, test } from "./extension-fixture";
 
 const actionBadgeText = (worker: Worker): Promise<string> =>

@@ -37,11 +37,11 @@ export class HistoryListItemElement extends LitElement {
   `;
 
   @property({ attribute: false })
-  accessor row: AlarmHistoryEntry | null = null;
+  accessor row: AlarmHistoryEntry | undefined = undefined;
 
   protected render() {
     if (!this.row) {
-      return null;
+      return undefined;
     }
 
     return html`

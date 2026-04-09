@@ -6,14 +6,13 @@ import {
   STORAGE_KEY_ALARM_HISTORY,
   coerceAlarmHistory,
   sortAlarmHistoryByCreationTime,
-  type AlarmHistoryEntry,
 } from "../lib/alarms";
-import "./history-list";
+import type { AlarmHistoryEntry } from "../lib/alarms";
 
 const loadHistory = async (): Promise<AlarmHistoryEntry[]> => {
-  const v = await chrome.storage.local.get(STORAGE_KEY_ALARM_HISTORY);
+  const raw = await chrome.storage.local.get(STORAGE_KEY_ALARM_HISTORY);
   return sortAlarmHistoryByCreationTime(
-    coerceAlarmHistory(v[STORAGE_KEY_ALARM_HISTORY]),
+    coerceAlarmHistory(raw[STORAGE_KEY_ALARM_HISTORY]),
   );
 };
 
@@ -23,8 +22,9 @@ const applyFilters = (
 ): AlarmHistoryEntry[] => {
   const normalizedQuery = query.trim().toLowerCase();
   return rows.filter((row) => {
-    if (normalizedQuery && !row.label.toLowerCase().includes(normalizedQuery))
-      {return false;}
+    if (normalizedQuery && !row.label.toLowerCase().includes(normalizedQuery)) {
+      return false;
+    }
     return true;
   });
 };
@@ -135,8 +135,8 @@ export class OptionsPageElement extends LitElement {
             placeholder="Search past alarms by label"
             autocomplete="off"
             .value=${this.query}
-            @input=${(e: Event) => {
-              this.query = (e.target as HTMLInputElement).value;
+            @input=${(event: Event) => {
+              this.query = (event.target as HTMLInputElement).value;
             }}
           />
         </div>

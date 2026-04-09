@@ -2,10 +2,36 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "import"],
   "categories": {
-    "correctness": "error"
+    "correctness": "error",
+    "style": "error"
   },
   "rules": {
     "curly": "error",
+    "id-length": [
+      "error",
+      {
+        "exceptions": ["_", "__", "___"]
+      }
+    ],
+    "no-duplicate-imports": [
+      "error",
+      {
+        "allowSeparateTypeImports": true
+      }
+    ],
+    "no-named-export": "allow",
+    "no-nodejs-modules": "allow",
+    "prefer-default-export": "allow",
+    "sort-imports": [
+      "error",
+      {
+        "allowSeparatedGroups": true
+      }
+    ],
+
+    "max-statements": ["error", { "max": 1000 }],
+    "no-ternary": "allow",
+    "no-magic-numbers": "allow"
   },
   "ignorePatterns": ["dist/**", "node_modules/**"],
   "env": {
@@ -22,6 +48,6 @@
     }
   ],
   "options": {
-    "typeAware": true,
+    "typeAware": true
   }
 }

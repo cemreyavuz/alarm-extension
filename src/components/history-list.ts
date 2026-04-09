@@ -3,8 +3,6 @@ import { customElement, property } from "lit/decorators.js";
 
 import type { AlarmHistoryEntry } from "../lib/alarms";
 
-import "./history-list-item";
-
 @customElement("history-list")
 export class HistoryListElement extends LitElement {
   static styles = css`

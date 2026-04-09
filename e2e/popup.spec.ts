@@ -1,4 +1,4 @@
-import { test, expect } from "./extension-fixture";
+import { expect, test } from "./extension-fixture";
 
 test.describe("popup", () => {
   test("shows title and empty state", async ({ popupPage }) => {

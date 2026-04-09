@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+
 import {
   alarmName,
   getUpcomingEnabledAlarms,
@@ -6,9 +7,9 @@ import {
   isUpcomingAlarmEnabled,
   parseAlarms,
   planChromeAlarmReconcile,
+  scheduledAtAfterMinutes,
   sortAlarmsBySchedule,
   validateNewAlarm,
-  scheduledAtAfterMinutes,
 } from "./alarms";
 
 describe("parseAlarms", () => {
@@ -20,10 +21,10 @@ describe("parseAlarms", () => {
   test("filters invalid entries", () => {
     const raw = [
       {
+        enabled: true,
         id: "1",
         label: "a",
         scheduledAt: 100,
-        enabled: true,
         updatedAt: 1,
       },
       { bad: true },
@@ -40,10 +41,10 @@ describe("planChromeAlarmReconcile", () => {
       scheduledAt: number;
     }> = {},
   ) => ({
+    enabled: true,
     id: "x",
     label: "L",
     scheduledAt: 2000,
-    enabled: true,
     updatedAt: 1,
     ...over,
   });
@@ -51,22 +52,25 @@ describe("planChromeAlarmReconcile", () => {
   test("schedules only enabled future alarms", () => {
     const now = 1000;
     const alarms = [
-      base({ id: "a", scheduledAt: 1500, enabled: true }),
-      base({ id: "b", scheduledAt: 800, enabled: true }),
-      base({ id: "c", scheduledAt: 2000, enabled: false }),
-      base({ id: "d", scheduledAt: 3000, enabled: true }),
+      base({ enabled: true, id: "a", scheduledAt: 1500 }),
+      base({ enabled: true, id: "b", scheduledAt: 800 }),
+      base({ enabled: false, id: "c", scheduledAt: 2000 }),
+      base({ enabled: true, id: "d", scheduledAt: 3000 }),
     ];
     const { schedules } = planChromeAlarmReconcile(alarms, now);
-    expect(schedules.map((s) => s.alarmId).sort()).toEqual(["a", "d"]);
+    expect(schedules.map((schedule) => schedule.alarmId).sort()).toEqual([
+      "a",
+      "d",
+    ]);
   });
 });
 
 describe("isUpcomingAlarmEnabled", () => {
   const row = (scheduledAt: number, enabled: boolean) => ({
+    enabled,
     id: "x",
     label: "L",
     scheduledAt,
-    enabled,
     updatedAt: 0,
   });
 
@@ -87,10 +91,10 @@ describe("getUpcomingEnabledAlarms", () => {
       scheduledAt: number;
     }> = {},
   ) => ({
+    enabled: true,
     id: "x",
     label: "L",
     scheduledAt: 2000,
-    enabled: true,
     updatedAt: 1,
     ...over,
   });
@@ -98,10 +102,10 @@ describe("getUpcomingEnabledAlarms", () => {
   test("matches planChromeAlarmReconcile schedule count", () => {
     const now = 1000;
     const alarms = [
-      base({ id: "a", scheduledAt: 1500, enabled: true }),
-      base({ id: "b", scheduledAt: 800, enabled: true }),
-      base({ id: "c", scheduledAt: 2000, enabled: false }),
-      base({ id: "d", scheduledAt: 3000, enabled: true }),
+      base({ enabled: true, id: "a", scheduledAt: 1500 }),
+      base({ enabled: true, id: "b", scheduledAt: 800 }),
+      base({ enabled: false, id: "c", scheduledAt: 2000 }),
+      base({ enabled: true, id: "d", scheduledAt: 3000 }),
     ];
     expect(getUpcomingEnabledAlarms(alarms, now)).toBe(
       planChromeAlarmReconcile(alarms, now).schedules.length,
@@ -112,7 +116,7 @@ describe("getUpcomingEnabledAlarms", () => {
     const now = 2000;
     expect(
       getUpcomingEnabledAlarms(
-        [base({ id: "a", scheduledAt: 2000, enabled: true })],
+        [base({ enabled: true, id: "a", scheduledAt: 2000 })],
         now,
       ),
     ).toBe(0);
@@ -121,16 +125,16 @@ describe("getUpcomingEnabledAlarms", () => {
 
 describe("validateNewAlarm", () => {
   test("rejects empty label and past time", () => {
-    expect(validateNewAlarm({ label: "  ", scheduledAt: 2, nowMs: 1 }).ok).toBe(
+    expect(validateNewAlarm({ label: "  ", nowMs: 1, scheduledAt: 2 }).ok).toBe(
       false,
     );
-    expect(validateNewAlarm({ label: "ok", scheduledAt: 1, nowMs: 2 }).ok).toBe(
+    expect(validateNewAlarm({ label: "ok", nowMs: 2, scheduledAt: 1 }).ok).toBe(
       false,
     );
   });
 
   test("accepts valid", () => {
-    expect(validateNewAlarm({ label: "x", scheduledAt: 10, nowMs: 1 }).ok).toBe(
+    expect(validateNewAlarm({ label: "x", nowMs: 1, scheduledAt: 10 }).ok).toBe(
       true,
     );
   });
@@ -138,23 +142,26 @@ describe("validateNewAlarm", () => {
 
 describe("sortAlarmsBySchedule", () => {
   test("orders by scheduledAt", () => {
-    const a = [
+    const alarms = [
       {
+        enabled: true,
         id: "2",
         label: "b",
         scheduledAt: 20,
-        enabled: true,
         updatedAt: 0,
       },
       {
+        enabled: true,
         id: "1",
         label: "a",
         scheduledAt: 10,
-        enabled: true,
         updatedAt: 0,
       },
     ];
-    expect(sortAlarmsBySchedule(a).map((x) => x.id)).toEqual(["1", "2"]);
+    expect(sortAlarmsBySchedule(alarms).map((item) => item.id)).toEqual([
+      "1",
+      "2",
+    ]);
   });
 });
 

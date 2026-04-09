@@ -1,19 +1,19 @@
 import {
   STORAGE_KEY_ALARMS,
   parseAlarms,
+  scheduledAtAfterMinutes,
+  scheduledAtFromDatetimeLocal,
   sortAlarmsBySchedule,
   validateNewAlarm,
-  scheduledAtFromDatetimeLocal,
-  scheduledAtAfterMinutes,
-  type Alarm,
 } from "./lib/alarms";
-import { toDatetimeLocalValue } from "./lib/datetime-local-value";
+import type { Alarm } from "./lib/alarms";
 import { escapeHtml } from "./lib/escape-html";
 import { formatWhen } from "./lib/format-when";
+import { toDatetimeLocalValue } from "./lib/datetime-local-value";
 
 const loadAlarms = async (): Promise<Alarm[]> => {
-  const v = await chrome.storage.local.get(STORAGE_KEY_ALARMS);
-  return parseAlarms(v[STORAGE_KEY_ALARMS]);
+  const raw = await chrome.storage.local.get(STORAGE_KEY_ALARMS);
+  return parseAlarms(raw[STORAGE_KEY_ALARMS]);
 };
 
 const saveAlarms = async (alarms: Alarm[]): Promise<void> => {
@@ -28,15 +28,15 @@ const renderList = (container: HTMLElement, alarms: Alarm[]): void => {
   }
   container.innerHTML = sorted
     .map(
-      (a) => `
-    <article class="row" data-id="${escapeHtml(a.id)}">
+      (item) => `
+    <article class="row" data-id="${escapeHtml(item.id)}">
       <div class="row-main">
-        <span class="label">${escapeHtml(a.label)}</span>
-        <span class="when">${escapeHtml(formatWhen(a.scheduledAt))}</span>
+        <span class="label">${escapeHtml(item.label)}</span>
+        <span class="when">${escapeHtml(formatWhen(item.scheduledAt))}</span>
       </div>
       <div class="row-actions">
         <label class="toggle"><input type="checkbox" data-action="toggle" ${
-          a.enabled ? "checked" : ""
+          item.enabled ? "checked" : ""
         } /> On</label>
         <button type="button" data-action="delete">Delete</button>
       </div>
@@ -46,7 +46,9 @@ const renderList = (container: HTMLElement, alarms: Alarm[]): void => {
 };
 
 const setError = (el: HTMLElement | null, text: string): void => {
-  if (!el) {return;}
+  if (!el) {
+    return;
+  }
   el.textContent = text;
   el.hidden = !text;
 };
@@ -54,27 +56,33 @@ const setError = (el: HTMLElement | null, text: string): void => {
 const formInput = (
   form: HTMLFormElement,
   name: string,
-): HTMLInputElement | null => {
+): HTMLInputElement | undefined => {
   const el = form.elements.namedItem(name);
-  return el instanceof HTMLInputElement ? el : null;
+  return el instanceof HTMLInputElement ? el : undefined;
 };
 
 const refresh = async (): Promise<void> => {
   const list = document.getElementById("alarm-list");
-  if (!list) {return;}
+  if (!list) {
+    return;
+  }
   const alarms = await loadAlarms();
   renderList(list, alarms);
 };
 
 const wirePresets = (form: HTMLFormElement): void => {
   const whenInput = formInput(form, "when");
-  if (!whenInput) {return;}
+  if (!whenInput) {
+    return;
+  }
   form.querySelectorAll<HTMLButtonElement>("[data-preset]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const min = Number(btn.dataset.preset);
-      if (!Number.isFinite(min)) {return;}
-      const t = scheduledAtAfterMinutes(Date.now(), min);
-      whenInput.value = toDatetimeLocalValue(new Date(t));
+      if (!Number.isFinite(min)) {
+        return;
+      }
+      const timestamp = scheduledAtAfterMinutes(Date.now(), min);
+      whenInput.value = toDatetimeLocalValue(new Date(timestamp));
     });
   });
 };
@@ -84,7 +92,7 @@ const defaultDatetimeLocalValue = (offsetMinutes: number): string =>
 
 document.addEventListener("DOMContentLoaded", () => {
   const formEl = document.getElementById("add-form");
-  const form = formEl instanceof HTMLFormElement ? formEl : null;
+  const form = formEl instanceof HTMLFormElement ? formEl : undefined;
   const err = document.getElementById("form-error");
 
   if (form) {
@@ -93,29 +101,31 @@ document.addEventListener("DOMContentLoaded", () => {
       whenInput.value = defaultDatetimeLocalValue(15);
     }
     wirePresets(form);
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
       setError(err, "");
 
       const labelInput = formInput(form, "label");
       const whenField = formInput(form, "when");
-      if (!labelInput || !whenField) {return;}
+      if (!labelInput || !whenField) {
+        return;
+      }
       const label = labelInput.value;
       const whenRaw = whenField.value;
       const nowMs = Date.now();
       const scheduledAt = scheduledAtFromDatetimeLocal(whenRaw, nowMs);
 
-      const v = validateNewAlarm({ label, scheduledAt, nowMs });
-      if (!v.ok) {
-        setError(err, v.error);
+      const validation = validateNewAlarm({ label, nowMs, scheduledAt });
+      if (!validation.ok) {
+        setError(err, validation.error);
         return;
       }
 
       const alarm: Alarm = {
+        enabled: true,
         id: crypto.randomUUID(),
         label: label.trim(),
         scheduledAt,
-        enabled: true,
         updatedAt: nowMs,
       };
 
@@ -128,16 +138,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const list = document.getElementById("alarm-list");
-  list?.addEventListener("click", async (e) => {
-    if (!(e.target instanceof HTMLElement)) {return;}
-    const target = e.target;
+  list?.addEventListener("click", async (event) => {
+    if (!(event.target instanceof HTMLElement)) {
+      return;
+    }
+    const { target } = event;
     const rowEl = target.closest(".row");
-    if (!(rowEl instanceof HTMLElement) || !rowEl.dataset.id) {return;}
-    const id = rowEl.dataset.id;
+    if (!(rowEl instanceof HTMLElement) || !rowEl.dataset.id) {
+      return;
+    }
+    const { id } = rowEl.dataset;
 
     if (target.closest("[data-action=delete]")) {
       const alarms = await loadAlarms();
-      await saveAlarms(alarms.filter((a) => a.id !== id));
+      await saveAlarms(alarms.filter((item) => item.id !== id));
       await chrome.runtime.sendMessage({ type: "RECONCILE" });
       await refresh();
       return;
@@ -146,10 +160,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggleEl = target.closest("[data-action=toggle]");
     if (toggleEl instanceof HTMLInputElement) {
       const alarms = await loadAlarms();
-      const next = alarms.map((a) =>
-        a.id === id
-          ? { ...a, enabled: toggleEl.checked, updatedAt: Date.now() }
-          : a,
+      const next = alarms.map((item) =>
+        item.id === id
+          ? { ...item, enabled: toggleEl.checked, updatedAt: Date.now() }
+          : item,
       );
       await saveAlarms(next);
       await chrome.runtime.sendMessage({ type: "RECONCILE" });

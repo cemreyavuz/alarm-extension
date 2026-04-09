@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 import {
-  mkdirSync,
-  existsSync,
   copyFileSync,
+  existsSync,
+  mkdirSync,
   readdirSync,
-  watch,
   rmSync,
+  watch,
 } from "node:fs";
 import { join } from "node:path";
 
 const root = join(import.meta.dir, "..");
 const dist = join(root, "dist");
 
-async function buildOnce(): Promise<void> {
+const buildOnce = async (): Promise<void> => {
   mkdirSync(dist, { recursive: true });
   const vendorDist = join(dist, "vendor");
   if (existsSync(vendorDist)) {
@@ -30,11 +30,11 @@ async function buildOnce(): Promise<void> {
       join(root, "src/popup.ts"),
       join(root, "src/options.ts"),
     ],
-    outdir: dist,
-    target: "browser",
     format: "esm",
     minify: true,
+    outdir: dist,
     sourcemap: "none",
+    target: "browser",
   });
 
   if (!result.success) {
@@ -49,24 +49,24 @@ async function buildOnce(): Promise<void> {
 
   const iconsDir = join(root, "public/icons");
   if (existsSync(iconsDir)) {
-    for (const f of readdirSync(iconsDir)) {
-      if (f.endsWith(".png")) {
-        copyFileSync(join(iconsDir, f), join(dist, "icons", f));
+    for (const filename of readdirSync(iconsDir)) {
+      if (filename.endsWith(".png")) {
+        copyFileSync(join(iconsDir, filename), join(dist, "icons", filename));
       }
     }
   }
 
   console.log("Built to", dist);
-}
+};
 
 const watchMode = process.argv.includes("--watch");
 
 if (watchMode) {
-  let t: ReturnType<typeof setTimeout> | undefined;
+  let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
   const schedule = () => {
-    clearTimeout(t);
-    t = setTimeout(() => {
-      void buildOnce().catch((e) => console.error(e));
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      void buildOnce().catch((error) => console.error(error));
     }, 120);
   };
 

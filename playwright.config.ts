@@ -1,15 +1,16 @@
 import { defineConfig } from "@playwright/test";
-import path from "node:path";
+
 import { fileURLToPath } from "node:url";
+import path from "node:path";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  testDir: path.join(root, "e2e"),
+  forbidOnly: Boolean(process.env.CI),
   fullyParallel: false,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
-  workers: 1,
-  timeout: 60_000,
   reporter: "list",
+  retries: process.env.CI ? 1 : 0,
+  testDir: path.join(root, "e2e"),
+  timeout: 60_000,
+  workers: 1,
 });
