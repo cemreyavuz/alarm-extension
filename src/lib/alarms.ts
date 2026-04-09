@@ -49,7 +49,7 @@ export const isAlarmHistoryEntry = (x: unknown): x is AlarmHistoryEntry => {
   if (typeof x !== "object" || x === null) {
     return false;
   }
-  
+
   return (
     typeof Reflect.get(x, "id") === "string" &&
     typeof Reflect.get(x, "alarmId") === "string" &&
@@ -72,12 +72,13 @@ export const coerceAlarmHistory = (raw: unknown): AlarmHistoryEntry[] => {
 export const sortAlarmHistoryByCreationTime = (
   history: AlarmHistoryEntry[],
   direction: "asc" | "desc" = "desc",
-): AlarmHistoryEntry[] => [...history].sort((a, b) => {
-  if (direction === "asc") {
-    return a.createdAt - b.createdAt;
-  }
-  return b.createdAt - a.createdAt;
-});
+): AlarmHistoryEntry[] =>
+  [...history].sort((a, b) => {
+    if (direction === "asc") {
+      return a.createdAt - b.createdAt;
+    }
+    return b.createdAt - a.createdAt;
+  });
 
 export const appendAlarmHistoryEntry = (
   history: AlarmHistoryEntry[],
@@ -88,7 +89,7 @@ export const appendAlarmHistoryEntry = (
 
   // if there are more than maxItems entries, trim the oldest ones
   return next.slice(Math.max(0, next.length - maxItems));
-}
+};
 
 export const sortAlarmsBySchedule = (alarms: Alarm[]): Alarm[] =>
   [...alarms].sort((a, b) => a.scheduledAt - b.scheduledAt);
@@ -127,10 +128,7 @@ export const validateNewAlarm = (input: {
   return { ok: true };
 };
 
-export const scheduledAtFromDatetimeLocal = (
-  value: string,
-  nowMs: number,
-): number => {
+export const scheduledAtFromDatetimeLocal = (value: string, nowMs: number): number => {
   const t = new Date(value).getTime();
   if (Number.isNaN(t)) return nowMs;
   return t;

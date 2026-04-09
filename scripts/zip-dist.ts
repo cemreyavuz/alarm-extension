@@ -30,7 +30,9 @@ const zip = spawnSync("zip", ["-r", "-q", out, "."], {
 
 if (zip.error) {
   console.error(zip.error.message);
-  console.error('Install a "zip" CLI (e.g. apt install zip), or zip dist/ manually with manifest.json at the archive root.');
+  console.error(
+    'Install a "zip" CLI (e.g. apt install zip), or zip dist/ manually with manifest.json at the archive root.',
+  );
   process.exit(1);
 }
 

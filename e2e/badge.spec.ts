@@ -22,10 +22,7 @@ test.describe("toolbar badge", () => {
     await expect.poll(async () => actionBadgeText(extensionServiceWorker)).toBe("");
   });
 
-  test("hides count when alarm is disabled", async ({
-    popupPage,
-    extensionServiceWorker,
-  }) => {
+  test("hides count when alarm is disabled", async ({ popupPage, extensionServiceWorker }) => {
     const label = `Badge off ${Date.now()}`;
     await popupPage.getByLabel("Label").fill(label);
     await popupPage.getByRole("button", { name: "Add alarm" }).click();

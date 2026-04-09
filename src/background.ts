@@ -74,9 +74,7 @@ export const reconcileAlarms = async (): Promise<void> => {
 
   const existing = await chrome.alarms.getAll();
   await Promise.all(
-    existing
-      .filter((a) => a.name.startsWith(AE_PREFIX))
-      .map((a) => chrome.alarms.clear(a.name)),
+    existing.filter((a) => a.name.startsWith(AE_PREFIX)).map((a) => chrome.alarms.clear(a.name)),
   );
 
   for (const s of schedules) {
@@ -118,10 +116,7 @@ const alarmNotificationOptions = (
     priority: 2,
   };
   if (withButtons) {
-    opts.buttons = [
-      { title: "Snooze 5 min" },
-      { title: "Snooze 15 min" },
-    ];
+    opts.buttons = [{ title: "Snooze 5 min" }, { title: "Snooze 15 min" }];
     opts.requireInteraction = true;
   }
   return opts;
@@ -177,34 +172,32 @@ chrome.alarms.onAlarm.addListener(async (fired) => {
   await reconcileAlarms();
 });
 
-chrome.notifications.onButtonClicked.addListener(
-  async (notificationId, buttonIndex) => {
-    if (!notificationId.startsWith("notif-")) return;
-    const oldId = notificationId.slice("notif-".length);
-    const key = SNOOZE_KEY(oldId);
-    const session = await chrome.storage.session.get(key);
-    const label = snoozeSessionLabel(session[key]);
-    await chrome.storage.session.remove(key);
+chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIndex) => {
+  if (!notificationId.startsWith("notif-")) return;
+  const oldId = notificationId.slice("notif-".length);
+  const key = SNOOZE_KEY(oldId);
+  const session = await chrome.storage.session.get(key);
+  const label = snoozeSessionLabel(session[key]);
+  await chrome.storage.session.remove(key);
 
-    const minutes = buttonIndex === 0 ? 5 : 15;
-    const now = Date.now();
+  const minutes = buttonIndex === 0 ? 5 : 15;
+  const now = Date.now();
 
-    const newAlarm: Alarm = {
-      id: crypto.randomUUID(),
-      label,
-      scheduledAt: now + minutes * 60_000,
-      enabled: true,
-      updatedAt: now,
-    };
+  const newAlarm: Alarm = {
+    id: crypto.randomUUID(),
+    label,
+    scheduledAt: now + minutes * 60_000,
+    enabled: true,
+    updatedAt: now,
+  };
 
-    const list = await getAlarms();
-    await chrome.storage.local.set({
-      [STORAGE_KEY_ALARMS]: [...list, newAlarm],
-    });
-    await chrome.notifications.clear(notificationId);
-    await reconcileAlarms();
-  },
-);
+  const list = await getAlarms();
+  await chrome.storage.local.set({
+    [STORAGE_KEY_ALARMS]: [...list, newAlarm],
+  });
+  await chrome.notifications.clear(notificationId);
+  await reconcileAlarms();
+});
 
 chrome.notifications.onClosed.addListener(async (notificationId) => {
   if (!notificationId.startsWith("notif-")) return;

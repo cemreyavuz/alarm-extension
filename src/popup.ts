@@ -144,9 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggleEl instanceof HTMLInputElement) {
       const alarms = await loadAlarms();
       const next = alarms.map((a) =>
-        a.id === id
-          ? { ...a, enabled: toggleEl.checked, updatedAt: Date.now() }
-          : a,
+        a.id === id ? { ...a, enabled: toggleEl.checked, updatedAt: Date.now() } : a,
       );
       await saveAlarms(next);
       await chrome.runtime.sendMessage({ type: "RECONCILE" });

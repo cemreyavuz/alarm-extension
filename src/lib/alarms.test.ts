@@ -33,11 +33,13 @@ describe("parseAlarms", () => {
 });
 
 describe("planChromeAlarmReconcile", () => {
-  const base = (over: Partial<{
-    id: string;
-    enabled: boolean;
-    scheduledAt: number;
-  }> = {}) => ({
+  const base = (
+    over: Partial<{
+      id: string;
+      enabled: boolean;
+      scheduledAt: number;
+    }> = {},
+  ) => ({
     id: "x",
     label: "L",
     scheduledAt: 2000,
@@ -78,11 +80,13 @@ describe("isUpcomingAlarmEnabled", () => {
 });
 
 describe("getUpcomingEnabledAlarms", () => {
-  const base = (over: Partial<{
-    id: string;
-    enabled: boolean;
-    scheduledAt: number;
-  }> = {}) => ({
+  const base = (
+    over: Partial<{
+      id: string;
+      enabled: boolean;
+      scheduledAt: number;
+    }> = {},
+  ) => ({
     id: "x",
     label: "L",
     scheduledAt: 2000,
@@ -107,28 +111,19 @@ describe("getUpcomingEnabledAlarms", () => {
   test("excludes scheduledAt equal to now", () => {
     const now = 2000;
     expect(
-      getUpcomingEnabledAlarms(
-        [base({ id: "a", scheduledAt: 2000, enabled: true })],
-        now,
-      ),
+      getUpcomingEnabledAlarms([base({ id: "a", scheduledAt: 2000, enabled: true })], now),
     ).toBe(0);
   });
 });
 
 describe("validateNewAlarm", () => {
   test("rejects empty label and past time", () => {
-    expect(validateNewAlarm({ label: "  ", scheduledAt: 2, nowMs: 1 }).ok).toBe(
-      false,
-    );
-    expect(validateNewAlarm({ label: "ok", scheduledAt: 1, nowMs: 2 }).ok).toBe(
-      false,
-    );
+    expect(validateNewAlarm({ label: "  ", scheduledAt: 2, nowMs: 1 }).ok).toBe(false);
+    expect(validateNewAlarm({ label: "ok", scheduledAt: 1, nowMs: 2 }).ok).toBe(false);
   });
 
   test("accepts valid", () => {
-    expect(
-      validateNewAlarm({ label: "x", scheduledAt: 10, nowMs: 1 }).ok,
-    ).toBe(true);
+    expect(validateNewAlarm({ label: "x", scheduledAt: 10, nowMs: 1 }).ok).toBe(true);
   });
 });
 

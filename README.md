@@ -82,10 +82,10 @@ That is `bun run build` plus `bunx playwright test --ui`. You need a **working G
 
 #### Troubleshooting
 
-| Symptom | What to do |
-|--------|------------|
+| Symptom                                                                  | What to do                                                                                    |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
 | `libnspr4.so: cannot open shared object file` (or similar missing `.so`) | Run `bun run playwright:install` or `sudo bunx playwright install-deps chromium`, then retry. |
-| Tests fail immediately with no browser window on SSH/WSL without GUI | Use `xvfb-run -a bun run test:e2e` (install `xvfb` if needed: `sudo apt install xvfb`). |
+| Tests fail immediately with no browser window on SSH/WSL without GUI     | Use `xvfb-run -a bun run test:e2e` (install `xvfb` if needed: `sudo apt install xvfb`).       |
 
 ## CI
 

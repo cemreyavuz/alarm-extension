@@ -42,8 +42,6 @@ export class HistoryListElement extends LitElement {
       return html`<p class="empty">No alarms match the selected filters.</p>`;
     }
 
-    return this.rows.map(
-      (row) => html`<history-list-item .row=${row}></history-list-item>`,
-    );
+    return this.rows.map((row) => html`<history-list-item .row=${row}></history-list-item>`);
   }
 }
