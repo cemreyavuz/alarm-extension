@@ -20,5 +20,8 @@
         "no-empty-pattern": "off"
       }
     }
-  ]
+  ],
+  "options": {
+    "typeAware": true,
+  }
 }

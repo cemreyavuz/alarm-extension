@@ -139,12 +139,12 @@ const createAlarmNotification = async (
 ): Promise<void> => {
   const extensionIcon = chrome.runtime.getURL("icons/icon@128px.png");
   try {
-    await chrome.notifications.create(
+    chrome.notifications.create(
       `notif-${id}`,
       alarmNotificationOptions(message, withButtons, extensionIcon),
     );
   } catch {
-    await chrome.notifications.create(
+    chrome.notifications.create(
       `notif-${id}`,
       alarmNotificationOptions(
         message,
@@ -204,7 +204,7 @@ chrome.notifications.onButtonClicked.addListener(
     await chrome.storage.local.set({
       [STORAGE_KEY_ALARMS]: [...list, newAlarm],
     });
-    await chrome.notifications.clear(notificationId);
+    chrome.notifications.clear(notificationId);
     await reconcileAlarms();
   },
 );
