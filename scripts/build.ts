@@ -18,7 +18,11 @@ async function buildOnce(): Promise<void> {
   mkdirSync(join(dist, "icons"), { recursive: true });
 
   const result = await Bun.build({
-    entrypoints: [join(root, "src/background.ts"), join(root, "src/popup.ts")],
+    entrypoints: [
+      join(root, "src/background.ts"),
+      join(root, "src/popup.ts"),
+      join(root, "src/options.ts"),
+    ],
     outdir: dist,
     target: "browser",
     format: "esm",
@@ -34,6 +38,8 @@ async function buildOnce(): Promise<void> {
   copyFileSync(join(root, "manifest.json"), join(dist, "manifest.json"));
   copyFileSync(join(root, "public/popup.html"), join(dist, "popup.html"));
   copyFileSync(join(root, "public/popup.css"), join(dist, "popup.css"));
+  copyFileSync(join(root, "public/options.html"), join(dist, "options.html"));
+  copyFileSync(join(root, "public/options.css"), join(dist, "options.css"));
 
   const iconsDir = join(root, "public/icons");
   if (existsSync(iconsDir)) {
