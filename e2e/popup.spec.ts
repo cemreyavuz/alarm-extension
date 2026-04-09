@@ -2,7 +2,9 @@ import { test, expect } from "./extension-fixture";
 
 test.describe("popup", () => {
   test("shows title and empty state", async ({ popupPage }) => {
-    await expect(popupPage.getByRole("heading", { name: "nudgememaybe" })).toBeVisible();
+    await expect(
+      popupPage.getByRole("heading", { name: "nudgememaybe" }),
+    ).toBeVisible();
     await expect(popupPage.getByText("No alarms yet.")).toBeVisible();
   });
 
@@ -20,7 +22,9 @@ test.describe("popup", () => {
     const label = `Delete me ${Date.now()}`;
     await popupPage.getByLabel("Label").fill(label);
     await popupPage.getByRole("button", { name: "Add alarm" }).click();
-    await expect(popupPage.locator(".row").filter({ hasText: label })).toBeVisible();
+    await expect(
+      popupPage.locator(".row").filter({ hasText: label }),
+    ).toBeVisible();
 
     await popupPage.getByRole("button", { name: "Delete" }).click();
     await expect(popupPage.getByText("No alarms yet.")).toBeVisible();

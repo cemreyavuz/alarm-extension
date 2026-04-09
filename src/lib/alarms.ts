@@ -100,8 +100,10 @@ export type ScheduleEntry = { alarmId: string; whenMs: number };
 export const isUpcomingAlarmEnabled = (alarm: Alarm, nowMs: number): boolean =>
   alarm.enabled && alarm.scheduledAt > nowMs;
 
-export const getUpcomingEnabledAlarms = (alarms: Alarm[], nowMs: number): number =>
-  alarms.filter((a) => isUpcomingAlarmEnabled(a, nowMs)).length;
+export const getUpcomingEnabledAlarms = (
+  alarms: Alarm[],
+  nowMs: number,
+): number => alarms.filter((a) => isUpcomingAlarmEnabled(a, nowMs)).length;
 
 /** Enabled alarms with fire time strictly after nowMs. */
 export const planChromeAlarmReconcile = (
@@ -128,12 +130,17 @@ export const validateNewAlarm = (input: {
   return { ok: true };
 };
 
-export const scheduledAtFromDatetimeLocal = (value: string, nowMs: number): number => {
+export const scheduledAtFromDatetimeLocal = (
+  value: string,
+  nowMs: number,
+): number => {
   const t = new Date(value).getTime();
   if (Number.isNaN(t)) return nowMs;
   return t;
 };
 
 /** Offset from now in minutes (relative timers / presets). */
-export const scheduledAtAfterMinutes = (nowMs: number, minutes: number): number =>
-  nowMs + minutes * 60_000;
+export const scheduledAtAfterMinutes = (
+  nowMs: number,
+  minutes: number,
+): number => nowMs + minutes * 60_000;

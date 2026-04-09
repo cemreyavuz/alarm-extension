@@ -51,7 +51,10 @@ const setError = (el: HTMLElement | null, text: string): void => {
   el.hidden = !text;
 };
 
-const formInput = (form: HTMLFormElement, name: string): HTMLInputElement | null => {
+const formInput = (
+  form: HTMLFormElement,
+  name: string,
+): HTMLInputElement | null => {
   const el = form.elements.namedItem(name);
   return el instanceof HTMLInputElement ? el : null;
 };
@@ -144,7 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggleEl instanceof HTMLInputElement) {
       const alarms = await loadAlarms();
       const next = alarms.map((a) =>
-        a.id === id ? { ...a, enabled: toggleEl.checked, updatedAt: Date.now() } : a,
+        a.id === id
+          ? { ...a, enabled: toggleEl.checked, updatedAt: Date.now() }
+          : a,
       );
       await saveAlarms(next);
       await chrome.runtime.sendMessage({ type: "RECONCILE" });

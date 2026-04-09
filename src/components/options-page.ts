@@ -12,13 +12,19 @@ import "./history-list";
 
 const loadHistory = async (): Promise<AlarmHistoryEntry[]> => {
   const v = await chrome.storage.local.get(STORAGE_KEY_ALARM_HISTORY);
-  return sortAlarmHistoryByCreationTime(coerceAlarmHistory(v[STORAGE_KEY_ALARM_HISTORY]));
+  return sortAlarmHistoryByCreationTime(
+    coerceAlarmHistory(v[STORAGE_KEY_ALARM_HISTORY]),
+  );
 };
 
-const applyFilters = (rows: AlarmHistoryEntry[], query: string): AlarmHistoryEntry[] => {
+const applyFilters = (
+  rows: AlarmHistoryEntry[],
+  query: string,
+): AlarmHistoryEntry[] => {
   const normalizedQuery = query.trim().toLowerCase();
   return rows.filter((row) => {
-    if (normalizedQuery && !row.label.toLowerCase().includes(normalizedQuery)) return false;
+    if (normalizedQuery && !row.label.toLowerCase().includes(normalizedQuery))
+      return false;
     return true;
   });
 };

@@ -28,7 +28,9 @@ const getAlarmHistory = async (): Promise<AlarmHistoryEntry[]> => {
   return coerceAlarmHistory(v[STORAGE_KEY_ALARM_HISTORY]);
 };
 
-const upsertAlarmHistoryEntry = async (entry: AlarmHistoryEntry): Promise<void> => {
+const upsertAlarmHistoryEntry = async (
+  entry: AlarmHistoryEntry,
+): Promise<void> => {
   const history = await getAlarmHistory();
   const next = [...history];
 
@@ -74,7 +76,9 @@ export const reconcileAlarms = async (): Promise<void> => {
 
   const existing = await chrome.alarms.getAll();
   await Promise.all(
-    existing.filter((a) => a.name.startsWith(AE_PREFIX)).map((a) => chrome.alarms.clear(a.name)),
+    existing
+      .filter((a) => a.name.startsWith(AE_PREFIX))
+      .map((a) => chrome.alarms.clear(a.name)),
   );
 
   for (const s of schedules) {
@@ -142,7 +146,11 @@ const createAlarmNotification = async (
   } catch {
     await chrome.notifications.create(
       `notif-${id}`,
-      alarmNotificationOptions(message, withButtons, NOTIFICATION_ICON_FALLBACK),
+      alarmNotificationOptions(
+        message,
+        withButtons,
+        NOTIFICATION_ICON_FALLBACK,
+      ),
     );
   }
 };
@@ -172,32 +180,34 @@ chrome.alarms.onAlarm.addListener(async (fired) => {
   await reconcileAlarms();
 });
 
-chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIndex) => {
-  if (!notificationId.startsWith("notif-")) return;
-  const oldId = notificationId.slice("notif-".length);
-  const key = SNOOZE_KEY(oldId);
-  const session = await chrome.storage.session.get(key);
-  const label = snoozeSessionLabel(session[key]);
-  await chrome.storage.session.remove(key);
+chrome.notifications.onButtonClicked.addListener(
+  async (notificationId, buttonIndex) => {
+    if (!notificationId.startsWith("notif-")) return;
+    const oldId = notificationId.slice("notif-".length);
+    const key = SNOOZE_KEY(oldId);
+    const session = await chrome.storage.session.get(key);
+    const label = snoozeSessionLabel(session[key]);
+    await chrome.storage.session.remove(key);
 
-  const minutes = buttonIndex === 0 ? 5 : 15;
-  const now = Date.now();
+    const minutes = buttonIndex === 0 ? 5 : 15;
+    const now = Date.now();
 
-  const newAlarm: Alarm = {
-    id: crypto.randomUUID(),
-    label,
-    scheduledAt: now + minutes * 60_000,
-    enabled: true,
-    updatedAt: now,
-  };
+    const newAlarm: Alarm = {
+      id: crypto.randomUUID(),
+      label,
+      scheduledAt: now + minutes * 60_000,
+      enabled: true,
+      updatedAt: now,
+    };
 
-  const list = await getAlarms();
-  await chrome.storage.local.set({
-    [STORAGE_KEY_ALARMS]: [...list, newAlarm],
-  });
-  await chrome.notifications.clear(notificationId);
-  await reconcileAlarms();
-});
+    const list = await getAlarms();
+    await chrome.storage.local.set({
+      [STORAGE_KEY_ALARMS]: [...list, newAlarm],
+    });
+    await chrome.notifications.clear(notificationId);
+    await reconcileAlarms();
+  },
+);
 
 chrome.notifications.onClosed.addListener(async (notificationId) => {
   if (!notificationId.startsWith("notif-")) return;
