@@ -124,6 +124,22 @@ button.primary:hover {
   background: var(--accent-hover);
 }
 
+button.secondary {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  /* TODO(cemreyavuz): remove once we have a better way to layout the buttons */
+  margin-top: 12px;
+}
+
+button.secondary:hover {
+  border-color: var(--accent);
+}
+
 .list-section {
   margin-top: 4px;
 }

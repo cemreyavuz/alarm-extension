@@ -154,5 +154,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  const openHistoryBtn = document.getElementById("open-history");
+  openHistoryBtn?.addEventListener("click", () => {
+    void chrome.runtime.openOptionsPage();
+  });
+
   void refresh();
 });
