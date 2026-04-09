@@ -4,30 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>nudgememaybe history</title>
-    <link rel="stylesheet" href="options.css" />
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
   </head>
   <body>
-    <main class="wrap">
-      <header class="header">
-        <h1 class="title">Past alarms</h1>
-        <p class="subtitle">Showing latest 500 alarms</p>
-      </header>
-
-      <div class="field">
-        <input
-          id="search"
-          name="search"
-          type="search"
-          placeholder="Search past alarms by label"
-          autocomplete="off"
-        />
-      </div>
-
-      <section class="list-section">
-        <div id="history-list" class="list"></div>
-      </section>
-    </main>
-
+    <options-page></options-page>
     <script type="module" src="options.js"></script>
   </body>
 </html>

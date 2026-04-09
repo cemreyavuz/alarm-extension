@@ -39,7 +39,6 @@ async function buildOnce(): Promise<void> {
   copyFileSync(join(root, "public/popup.html"), join(dist, "popup.html"));
   copyFileSync(join(root, "public/popup.css"), join(dist, "popup.css"));
   copyFileSync(join(root, "public/options.html"), join(dist, "options.html"));
-  copyFileSync(join(root, "public/options.css"), join(dist, "options.css"));
 
   const iconsDir = join(root, "public/icons");
   if (existsSync(iconsDir)) {
