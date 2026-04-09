@@ -1,19 +1,71 @@
 import {
+  MAX_HISTORY_ITEMS,
+  STORAGE_KEY_ALARM_HISTORY,
   STORAGE_KEY_ALARMS,
   alarmName,
+  coerceAlarmHistory,
   idFromAlarmName,
   getUpcomingEnabledAlarms,
   parseAlarms,
   planChromeAlarmReconcile,
   type Alarm,
+  type AlarmHistoryEntry,
 } from "./lib/alarms";
 
 const AE_PREFIX = "ae-";
+
+// ==== ALARM STORAGE UTILITIES
 
 const getAlarms = async (): Promise<Alarm[]> => {
   const v = await chrome.storage.local.get(STORAGE_KEY_ALARMS);
   return parseAlarms(v[STORAGE_KEY_ALARMS]);
 };
+
+// ==== ALARM HISTORY STORAGE UTILITIES
+
+const getAlarmHistory = async (): Promise<AlarmHistoryEntry[]> => {
+  const v = await chrome.storage.local.get(STORAGE_KEY_ALARM_HISTORY);
+  return coerceAlarmHistory(v[STORAGE_KEY_ALARM_HISTORY]);
+};
+
+const upsertAlarmHistoryEntry = async (entry: AlarmHistoryEntry): Promise<void> => {
+  const history = await getAlarmHistory();
+  const next = [...history];
+
+  // if the entry already exists, update it
+  const index = next.findIndex((row) => row.id === entry.id);
+  if (index >= 0) {
+    next[index] = entry;
+  } else {
+    next.push(entry);
+  }
+
+  // if there are more than MAX_HISTORY_ITEMS entries, trim the oldest ones
+  const trimmed = next.slice(Math.max(0, next.length - MAX_HISTORY_ITEMS));
+
+  await chrome.storage.local.set({ [STORAGE_KEY_ALARM_HISTORY]: trimmed });
+};
+
+const appendFiredAlarmHistory = async (
+  alarmId: string,
+  label: string,
+  scheduledAt: number,
+): Promise<void> => {
+  const now = Date.now();
+  const entry: AlarmHistoryEntry = {
+    id: crypto.randomUUID(),
+    alarmId,
+    label,
+    scheduledAt,
+    firedAt: now,
+    createdAt: now,
+    updatedAt: now,
+  };
+  await upsertAlarmHistoryEntry(entry);
+};
+
+// ==== OTHER UTILITIES
+// TODO(cemreyavuz): recategorize these utilities
 
 export const reconcileAlarms = async (): Promise<void> => {
   const alarms = await getAlarms();
@@ -107,10 +159,12 @@ chrome.alarms.onAlarm.addListener(async (fired) => {
   const alarms = await getAlarms();
   const found = alarms.find((a) => a.id === id);
   const message = found?.label ?? "Alarm";
+  const scheduledAt = found?.scheduledAt ?? fired.scheduledTime ?? Date.now();
 
   await chrome.storage.session.set({
     [SNOOZE_KEY(id)]: { label: message },
   });
+  await appendFiredAlarmHistory(id, message, scheduledAt);
 
   try {
     await createAlarmNotification(id, message, true);
@@ -134,6 +188,7 @@ chrome.notifications.onButtonClicked.addListener(
 
     const minutes = buttonIndex === 0 ? 5 : 15;
     const now = Date.now();
+
     const newAlarm: Alarm = {
       id: crypto.randomUUID(),
       label,

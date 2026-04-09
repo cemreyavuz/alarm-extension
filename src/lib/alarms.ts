@@ -1,10 +1,22 @@
 export const STORAGE_KEY_ALARMS = "alarms";
+export const STORAGE_KEY_ALARM_HISTORY = "alarmHistory";
+export const MAX_HISTORY_ITEMS = 500;
 
 export type Alarm = {
   id: string;
   label: string;
   scheduledAt: number;
   enabled: boolean;
+  updatedAt: number;
+};
+
+export type AlarmHistoryEntry = {
+  id: string;
+  alarmId: string;
+  label: string;
+  scheduledAt: number;
+  firedAt: number;
+  createdAt: number;
   updatedAt: number;
 };
 
@@ -32,6 +44,51 @@ export const parseAlarms = (raw: unknown): Alarm[] => {
   if (!Array.isArray(raw)) return [];
   return raw.filter(isAlarm);
 };
+
+export const isAlarmHistoryEntry = (x: unknown): x is AlarmHistoryEntry => {
+  if (typeof x !== "object" || x === null) {
+    return false;
+  }
+  
+  return (
+    typeof Reflect.get(x, "id") === "string" &&
+    typeof Reflect.get(x, "alarmId") === "string" &&
+    typeof Reflect.get(x, "label") === "string" &&
+    typeof Reflect.get(x, "scheduledAt") === "number" &&
+    typeof Reflect.get(x, "firedAt") === "number" &&
+    typeof Reflect.get(x, "createdAt") === "number" &&
+    typeof Reflect.get(x, "updatedAt") === "number"
+  );
+};
+
+export const coerceAlarmHistory = (raw: unknown): AlarmHistoryEntry[] => {
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+
+  return raw.filter(isAlarmHistoryEntry);
+};
+
+export const sortAlarmHistoryByCreationTime = (
+  history: AlarmHistoryEntry[],
+  direction: "asc" | "desc" = "desc",
+): AlarmHistoryEntry[] => [...history].sort((a, b) => {
+  if (direction === "asc") {
+    return a.createdAt - b.createdAt;
+  }
+  return b.createdAt - a.createdAt;
+});
+
+export const appendAlarmHistoryEntry = (
+  history: AlarmHistoryEntry[],
+  entry: AlarmHistoryEntry,
+  maxItems: number = MAX_HISTORY_ITEMS,
+): AlarmHistoryEntry[] => {
+  const next = [...history, entry];
+
+  // if there are more than maxItems entries, trim the oldest ones
+  return next.slice(Math.max(0, next.length - maxItems));
+}
 
 export const sortAlarmsBySchedule = (alarms: Alarm[]): Alarm[] =>
   [...alarms].sort((a, b) => a.scheduledAt - b.scheduledAt);
