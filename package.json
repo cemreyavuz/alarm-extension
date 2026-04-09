@@ -19,6 +19,7 @@
     "check": "bun run lint && bun run format:check"
   },
   "dependencies": {
+    "@picocss/pico": "^2.1.1",
     "lit": "^3.3.2",
     "lit-html": "^3.3.2"
   },
