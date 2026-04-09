@@ -127,16 +127,16 @@ const validateNewAlarm = (input: {
   label: string;
   scheduledAt: number;
   nowMs: number;
-}): { ok: true } | { ok: false; error: string } => {
+}): { ok: true } | { ok: false; error: string; field: "label" | "when" } => {
   const label = input.label.trim();
   if (!label) {
-    return { error: "Label is required.", ok: false };
+    return { error: "Label is required.", field: "label", ok: false };
   }
   if (label.length > 200) {
-    return { error: "Label too long.", ok: false };
+    return { error: "Label too long.", field: "label", ok: false };
   }
   if (input.scheduledAt <= input.nowMs) {
-    return { error: "Time must be in the future.", ok: false };
+    return { error: "Time must be in the future.", field: "when", ok: false };
   }
   return { ok: true };
 };
