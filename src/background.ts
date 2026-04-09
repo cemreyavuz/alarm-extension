@@ -127,7 +127,7 @@ const alarmNotificationOptions = (
 };
 
 const snoozeSessionLabel = (stored: unknown): string => {
-  if (!stored || typeof stored !== "object") return "Alarm";
+  if (!stored || typeof stored !== "object") {return "Alarm";}
   const label = Reflect.get(stored, "label");
   return typeof label === "string" ? label : "Alarm";
 };
@@ -157,7 +157,7 @@ const createAlarmNotification = async (
 
 chrome.alarms.onAlarm.addListener(async (fired) => {
   const id = idFromAlarmName(fired.name);
-  if (!id) return;
+  if (!id) {return;}
 
   const alarms = await getAlarms();
   const found = alarms.find((a) => a.id === id);
@@ -182,7 +182,7 @@ chrome.alarms.onAlarm.addListener(async (fired) => {
 
 chrome.notifications.onButtonClicked.addListener(
   async (notificationId, buttonIndex) => {
-    if (!notificationId.startsWith("notif-")) return;
+    if (!notificationId.startsWith("notif-")) {return;}
     const oldId = notificationId.slice("notif-".length);
     const key = SNOOZE_KEY(oldId);
     const session = await chrome.storage.session.get(key);
@@ -210,7 +210,7 @@ chrome.notifications.onButtonClicked.addListener(
 );
 
 chrome.notifications.onClosed.addListener(async (notificationId) => {
-  if (!notificationId.startsWith("notif-")) return;
+  if (!notificationId.startsWith("notif-")) {return;}
   const oldId = notificationId.slice("notif-".length);
   await chrome.storage.session.remove(SNOOZE_KEY(oldId));
 });

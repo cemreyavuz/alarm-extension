@@ -46,7 +46,7 @@ const renderList = (container: HTMLElement, alarms: Alarm[]): void => {
 };
 
 const setError = (el: HTMLElement | null, text: string): void => {
-  if (!el) return;
+  if (!el) {return;}
   el.textContent = text;
   el.hidden = !text;
 };
@@ -61,18 +61,18 @@ const formInput = (
 
 const refresh = async (): Promise<void> => {
   const list = document.getElementById("alarm-list");
-  if (!list) return;
+  if (!list) {return;}
   const alarms = await loadAlarms();
   renderList(list, alarms);
 };
 
 const wirePresets = (form: HTMLFormElement): void => {
   const whenInput = formInput(form, "when");
-  if (!whenInput) return;
+  if (!whenInput) {return;}
   form.querySelectorAll<HTMLButtonElement>("[data-preset]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const min = Number(btn.dataset.preset);
-      if (!Number.isFinite(min)) return;
+      if (!Number.isFinite(min)) {return;}
       const t = scheduledAtAfterMinutes(Date.now(), min);
       whenInput.value = toDatetimeLocalValue(new Date(t));
     });
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const labelInput = formInput(form, "label");
       const whenField = formInput(form, "when");
-      if (!labelInput || !whenField) return;
+      if (!labelInput || !whenField) {return;}
       const label = labelInput.value;
       const whenRaw = whenField.value;
       const nowMs = Date.now();
@@ -129,10 +129,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const list = document.getElementById("alarm-list");
   list?.addEventListener("click", async (e) => {
-    if (!(e.target instanceof HTMLElement)) return;
+    if (!(e.target instanceof HTMLElement)) {return;}
     const target = e.target;
     const rowEl = target.closest(".row");
-    if (!(rowEl instanceof HTMLElement) || !rowEl.dataset.id) return;
+    if (!(rowEl instanceof HTMLElement) || !rowEl.dataset.id) {return;}
     const id = rowEl.dataset.id;
 
     if (target.closest("[data-action=delete]")) {

@@ -42,7 +42,7 @@ export const test = base.extend<{
   extensionId: async ({ extensionServiceWorker }, use) => {
     const id = extensionServiceWorker.url().split("/")[2];
     if (!id)
-      throw new Error("Could not parse extension id from service worker URL");
+      {throw new Error("Could not parse extension id from service worker URL");}
     await use(id);
   },
 

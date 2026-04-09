@@ -25,12 +25,12 @@ const PREFIX = "ae-";
 export const alarmName = (id: string): string => `${PREFIX}${id}`;
 
 export const idFromAlarmName = (name: string): string | null => {
-  if (!name.startsWith(PREFIX)) return null;
+  if (!name.startsWith(PREFIX)) {return null;}
   return name.slice(PREFIX.length);
 };
 
 export const isAlarm = (x: unknown): x is Alarm => {
-  if (typeof x !== "object" || x === null) return false;
+  if (typeof x !== "object" || x === null) {return false;}
   return (
     typeof Reflect.get(x, "id") === "string" &&
     typeof Reflect.get(x, "label") === "string" &&
@@ -41,7 +41,7 @@ export const isAlarm = (x: unknown): x is Alarm => {
 };
 
 export const parseAlarms = (raw: unknown): Alarm[] => {
-  if (!Array.isArray(raw)) return [];
+  if (!Array.isArray(raw)) {return [];}
   return raw.filter(isAlarm);
 };
 
@@ -122,8 +122,8 @@ export const validateNewAlarm = (input: {
   nowMs: number;
 }): { ok: true } | { ok: false; error: string } => {
   const label = input.label.trim();
-  if (!label) return { ok: false, error: "Label is required." };
-  if (label.length > 200) return { ok: false, error: "Label too long." };
+  if (!label) {return { ok: false, error: "Label is required." };}
+  if (label.length > 200) {return { ok: false, error: "Label too long." };}
   if (input.scheduledAt <= input.nowMs) {
     return { ok: false, error: "Time must be in the future." };
   }
@@ -135,7 +135,7 @@ export const scheduledAtFromDatetimeLocal = (
   nowMs: number,
 ): number => {
   const t = new Date(value).getTime();
-  if (Number.isNaN(t)) return nowMs;
+  if (Number.isNaN(t)) {return nowMs;}
   return t;
 };
 

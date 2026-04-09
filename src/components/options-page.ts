@@ -24,7 +24,7 @@ const applyFilters = (
   const normalizedQuery = query.trim().toLowerCase();
   return rows.filter((row) => {
     if (normalizedQuery && !row.label.toLowerCase().includes(normalizedQuery))
-      return false;
+      {return false;}
     return true;
   });
 };
