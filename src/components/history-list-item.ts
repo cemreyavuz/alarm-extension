@@ -19,14 +19,14 @@ export class HistoryListItemElement extends LitElement {
     }
 
     return html`
-      <article class="row">
-        <div class="row-top">
-          <span class="label">${this.row.label}</span>
-        </div>
-        <p class="meta">
-          <span>Scheduled: ${formatWhen(this.row.scheduledAt)}</span>
-          <span>Fired: ${formatWhen(this.row.firedAt)}</span>
-        </p>
+      <article>
+        <hgroup>  
+          <h5>${this.row.label}</h5>
+          <div class="grid">
+            <small>Scheduled: ${formatWhen(this.row.scheduledAt)}</small>
+            <small>Fired: ${formatWhen(this.row.firedAt)}</small>
+          </div>
+        </hgroup>
       </article>
     `;
   }

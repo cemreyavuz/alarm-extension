@@ -1,0 +1,17 @@
+:root {
+  --pico-font-size: 0.875rem;
+  --pico-line-height: 1.2;
+  --pico-form-element-spacing-vertical: 0.25rem;
+  --pico-form-element-spacing-horizontal: 0.50rem;
+  --pico-border-radius: 0.5rem;
+}
+
+/* Pico (pico.min.css) supplies design tokens and components; keep only what Pico doesn’t cover. */
+options-page {
+  display: block;
+}
+
+/* Pico defines --pico-muted-color but no utility for standalone status/empty copy */
+history-list > p {
+  color: var(--pico-muted-color);
+}

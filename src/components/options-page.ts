@@ -59,26 +59,30 @@ export class OptionsPageElement extends LitElement {
     const rows = applyFilters(this.allHistory, this.query);
 
     return html`
-      <main class="wrap">
-        <header class="header">
-          <h1 class="title">Past alarms</h1>
-          <p class="subtitle">Showing latest 500 alarms</p>
-        </header>
+      <main class="container">
+        <hgroup>
+          <h4>Past alarms</h4>
+          <p>Showing latest 500 alarms</p>
+        </hgroup>
 
-        <div class="field">
+        <form
+          role="search"
+          @submit=${(event: Event) => event.preventDefault()}
+        >
           <input
             name="search"
             type="search"
             placeholder="Search past alarms by label"
             autocomplete="off"
+            aria-label="Search past alarms by label"
             .value=${this.query}
             @input=${(event: Event) => {
               this.query = (event.target as HTMLInputElement).value;
             }}
           />
-        </div>
+        </form>
 
-        <section class="list-section">
+        <section>
           <history-list
             .rows=${rows}
             .hasAnyRows=${this.allHistory.length > 0}

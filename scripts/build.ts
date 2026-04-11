@@ -46,6 +46,11 @@ const buildOnce = async (): Promise<void> => {
   copyFileSync(join(root, "public/popup.html"), join(dist, "popup.html"));
   copyFileSync(join(root, "public/popup.css"), join(dist, "popup.css"));
   copyFileSync(join(root, "public/options.html"), join(dist, "options.html"));
+  copyFileSync(join(root, "public/options.css"), join(dist, "options.css"));
+  copyFileSync(
+    join(root, "node_modules/@picocss/pico/css/pico.min.css"),
+    join(dist, "pico.min.css"),
+  );
 
   const iconsDir = join(root, "public/icons");
   if (existsSync(iconsDir)) {

@@ -20,15 +20,15 @@ export class HistoryListElement extends LitElement {
 
   protected render() {
     if (this.isLoading) {
-      return html`<p class="empty">Loading history...</p>`;
+      return html`<p aria-busy="true">Loading history…</p>`;
     }
 
     if (!this.hasAnyRows) {
-      return html`<p class="empty">No past alarms yet.</p>`;
+      return html`<p>No past alarms yet.</p>`;
     }
 
     if (this.rows.length === 0) {
-      return html`<p class="empty">No alarms match the selected filters.</p>`;
+      return html`<p>No alarms match the selected filters.</p>`;
     }
 
     return this.rows.map(
