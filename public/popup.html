@@ -27,28 +27,24 @@
           <small id="label-helper" hidden></small>
 
           <label for="when">When</label>
-          <input id="when" name="when" type="datetime-local" required aria-describedby="when-helper" />          
+          <input
+            id="when"
+            name="when"
+            type="datetime-local"
+            required
+            aria-describedby="when-helper"
+          />
           <small id="when-helper" hidden></small>
 
           <div role="group" data-group-size="small">
-            <button type="button" class="outline" data-preset="-60">
-              -1h
-            </button>
+            <button type="button" class="outline" data-preset="-60">-1h</button>
             <button type="button" class="outline" data-preset="-10">
               -10m
             </button>
-            <button type="button" class="outline" data-preset="-1">
-              -1m
-            </button>
-            <button type="button" class="outline" data-preset="1">
-              +1m
-            </button>
-            <button type="button" class="outline" data-preset="10">
-              +10m
-            </button>
-            <button type="button" class="outline" data-preset="60">
-              +1h
-            </button>
+            <button type="button" class="outline" data-preset="-1">-1m</button>
+            <button type="button" class="outline" data-preset="1">+1m</button>
+            <button type="button" class="outline" data-preset="10">+10m</button>
+            <button type="button" class="outline" data-preset="60">+1h</button>
           </div>
 
           <button type="submit">Add alarm</button>

@@ -20,7 +20,7 @@ export class HistoryListItemElement extends LitElement {
 
     return html`
       <article>
-        <hgroup>  
+        <hgroup>
           <h5>${this.row.label}</h5>
           <div class="grid">
             <small>Scheduled: ${formatWhen(this.row.scheduledAt)}</small>

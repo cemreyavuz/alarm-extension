@@ -65,10 +65,7 @@ export class OptionsPageElement extends LitElement {
           <p>Showing latest 500 alarms</p>
         </hgroup>
 
-        <form
-          role="search"
-          @submit=${(event: Event) => event.preventDefault()}
-        >
+        <form role="search" @submit=${(event: Event) => event.preventDefault()}>
           <input
             name="search"
             type="search"

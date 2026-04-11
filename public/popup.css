@@ -2,12 +2,12 @@
   --pico-font-size: 0.875rem;
   --pico-line-height: 1.2;
   --pico-form-element-spacing-vertical: 0.25rem;
-  --pico-form-element-spacing-horizontal: 0.50rem;
+  --pico-form-element-spacing-horizontal: 0.5rem;
   --pico-border-radius: 0.5rem;
 }
 
 /* Small group style overrides */
-[role="group"][data-group-size="small"] [type="button"]  {
+[role="group"][data-group-size="small"] [type="button"] {
   --pico-form-element-spacing-vertical: 0.25rem;
   --pico-form-element-spacing-horizontal: 0.25rem;
 }

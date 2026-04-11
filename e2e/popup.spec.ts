@@ -24,7 +24,9 @@ test.describe("popup", () => {
     await popupPage.getByLabel("Label").fill(label);
     await popupPage.getByRole("button", { name: "Add alarm" }).click();
     await expect(
-      popupPage.locator("#alarm-list .justify-between").filter({ hasText: label }),
+      popupPage
+        .locator("#alarm-list .justify-between")
+        .filter({ hasText: label }),
     ).toBeVisible();
 
     await popupPage.getByRole("button", { name: "Delete" }).click();

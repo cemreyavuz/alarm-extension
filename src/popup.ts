@@ -46,7 +46,11 @@ const renderList = (container: HTMLElement, alarms: Alarm[]): void => {
     .join("<hr />");
 };
 
-const setError = (el: HTMLElement, helper: HTMLElement, error: string | undefined): void => {
+const setError = (
+  el: HTMLElement,
+  helper: HTMLElement,
+  error: string | undefined,
+): void => {
   if (error) {
     el.setAttribute("aria-invalid", "true");
     helper.textContent = error;
@@ -56,7 +60,7 @@ const setError = (el: HTMLElement, helper: HTMLElement, error: string | undefine
     helper.textContent = "";
     helper.hidden = true;
   }
-}
+};
 
 const formInput = (
   form: HTMLFormElement,
@@ -86,7 +90,10 @@ const wirePresets = (form: HTMLFormElement): void => {
       if (!Number.isFinite(min)) {
         return;
       }
-      const timestamp = scheduledAtAfterMinutes(new Date(whenInput.value).getTime(), min);
+      const timestamp = scheduledAtAfterMinutes(
+        new Date(whenInput.value).getTime(),
+        min,
+      );
       whenInput.value = toDatetimeLocalValue(new Date(timestamp));
     });
   });
@@ -156,7 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
     await refresh();
   });
 
-
   const list = document.getElementById("alarm-list");
   list?.addEventListener("click", async (event) => {
     if (!(event.target instanceof HTMLElement)) {
@@ -165,7 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const { target } = event;
     if (Boolean(target.dataset.rowid) && target.dataset.action === "delete") {
       const alarms = await loadAlarms();
-      await saveAlarms(alarms.filter((item) => item.id !== target.dataset.rowid));
+      await saveAlarms(
+        alarms.filter((item) => item.id !== target.dataset.rowid),
+      );
       await chrome.runtime.sendMessage({ type: "RECONCILE" });
       await refresh();
 
