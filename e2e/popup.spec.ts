@@ -13,9 +13,10 @@ test.describe("popup", () => {
     await popupPage.getByLabel("Label").fill(label);
     await popupPage.getByRole("button", { name: "Add alarm" }).click();
 
-    const row = popupPage.locator(".row").filter({ hasText: label });
+    const list = popupPage.locator("#alarm-list");
+    const row = list.locator(".justify-between").filter({ hasText: label });
     await expect(row).toBeVisible();
-    await expect(row.locator(".when")).not.toBeEmpty();
+    await expect(row.locator(".flex-col strong").nth(1)).not.toHaveText("");
   });
 
   test("deletes an alarm", async ({ popupPage }) => {
@@ -23,32 +24,19 @@ test.describe("popup", () => {
     await popupPage.getByLabel("Label").fill(label);
     await popupPage.getByRole("button", { name: "Add alarm" }).click();
     await expect(
-      popupPage.locator(".row").filter({ hasText: label }),
+      popupPage.locator("#alarm-list .justify-between").filter({ hasText: label }),
     ).toBeVisible();
 
     await popupPage.getByRole("button", { name: "Delete" }).click();
     await expect(popupPage.getByText("No alarms yet.")).toBeVisible();
   });
 
-  test("preset +5 min sets the when field", async ({ popupPage }) => {
+  test("preset +1m sets the when field", async ({ popupPage }) => {
     const when = popupPage.getByLabel("When");
     const before = await when.inputValue();
-    await popupPage.getByRole("button", { name: "+5 min" }).click();
+    await popupPage.getByRole("button", { name: "+1m" }).click();
     const after = await when.inputValue();
     expect(after).not.toBe(before);
     expect(after.length).toBeGreaterThan(0);
-  });
-
-  test("toggle disables and re-enables alarm", async ({ popupPage }) => {
-    const label = `Toggle ${Date.now()}`;
-    await popupPage.getByLabel("Label").fill(label);
-    await popupPage.getByRole("button", { name: "Add alarm" }).click();
-
-    const toggle = popupPage.getByRole("checkbox", { name: /On/i });
-    await expect(toggle).toBeChecked();
-    await toggle.uncheck();
-    await expect(toggle).not.toBeChecked();
-    await toggle.check();
-    await expect(toggle).toBeChecked();
   });
 });
